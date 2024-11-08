@@ -8,15 +8,18 @@ public class Note : MonoBehaviour
     public float assignedTime;
     void Start()
     {
-        timeInstantiated = SongManager.GetAudioSourceTime();
+        timeInstantiated = assignedTime - SongManager.Instance.noteTime;
     }
 
     // Update is called once per frame
     void Update()
     {
-        double timeSinceInstantiated = SongManager.GetAudioSourceTime() - timeInstantiated;
+        float spawnDelay = SongManager.Instance.songDelayInSeconds - SongManager.Instance.noteTime;
+        double timeSinceInstantiated = spawnDelay > 0 && timeInstantiated < 0
+            ? (Time.timeSinceLevelLoad - spawnDelay) + timeInstantiated
+            : SongManager.GetAudioSourceTime() - timeInstantiated;
+        
         float t = (float)(timeSinceInstantiated / (SongManager.Instance.noteTime * 2));
-
         
         if (t > 1)
         {
